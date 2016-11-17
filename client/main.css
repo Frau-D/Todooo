@@ -1,0 +1,13 @@
+/* CSS declarations go here */
+.container {
+    background-color: chartreuse;
+}
+
+.piece {
+    background-color: gainsboro;
+}
+
+.piece {
+    border: 1px dotted hotpink;
+    margin-top: 1em;
+}

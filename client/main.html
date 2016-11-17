@@ -1,0 +1,81 @@
+<head>
+  <title>todooo</title>
+</head>
+
+<body>
+  <h1>Oh my gird...</h1>
+
+  <!--{{> uselessButton}}-->
+
+  {{> uploadForm}}
+
+  <div class ="pieces">
+      {{> uploadedFiles}}
+      <ul>
+          {{#each pieces}}
+              {{> piece}}
+          {{/each}}
+      </ul>
+  </div>
+
+
+  <form class="new-piece">
+      <!-- <input type="text" name="text" placeholder="Name of new Piece" /> -->
+      <input type="submit" name="submit" />
+  </form>
+
+
+</body>
+
+
+<!-- TEMPLATES TEMPLATES TEMPLATES TEMPLATES TEMPLATES TEMPLATES TEMPLATES -->
+
+<template name="uselessButton">
+    <button>Click Me</button>
+    <p>You've pressed the button {{counter}} times.</p>
+</template>
+
+
+<template name="piece"> <!-- DAS HIER SOLL MAL DAS PIECE OBJEKT WERDEN, WENN DEIN TOLLER SCHNUFFI DAS WIEDER ENTKREPELT HAT, WAS ER VERKREPELT HAT -->
+    <div class="piece">
+        <!--<span>{{ _id }}</span>-->
+        <span class="text">{{text}}</span>
+
+        <div>
+            <input class="fileInput" type="file" />
+        </div>
+        <div>
+            <button class="delete">delete (&times;)</button>  <!-- TODO: Löschen des Pieces, der Bilder und der Tags aus MongoDB -->
+        </div>
+        <div>
+
+        </div>
+    </div>
+</template>
+
+
+<template name="uploadForm">
+    <div class="container">
+        <!--{{#with currentUpload}}-->
+        <!--Uploading <b>{{file.name}}</b>:-->
+        <!--<span id="progress">{{progress.get}}%</span>-->
+    <!--{{else}}-->
+        <input class="fileInput" type="file" />
+        <p><small>Upload file in <code>jpeg</code> or <code>png</code> format, with size less or equal to 10MB</small></p>
+        <!--{{/with}}-->
+    </div>
+</template>
+
+
+<template name="uploadedFiles">
+    <!--{{#if uploadedFiles.count}}-->
+            <ul>
+                {{#each file in uploadedFiles.each}}
+                    <!--{{ file._id }}-->
+                    <img src="{{file.link 'thumbnail140'}}" width="200px" alt="{{ file._id }}" /> <!-- Hier Kacheln! -->
+                {{/each}}
+            </ul>
+    <!--{{else}}-->
+        <!--<div>No files uploaded, yet</div>-->
+    <!--{{/if}}-->
+</template>
