@@ -3,11 +3,35 @@
     background-color: chartreuse;
 }
 
-.piece {
-    background-color: gainsboro;
+.clear {
+    clear:left;
 }
 
 .piece {
+    background-color: gainsboro;
     border: 1px dotted hotpink;
     margin-top: 1em;
 }
+
+.thumbnail {
+    float: left;
+    position: relative;
+    width: 200px;
+    height: 200px;
+    overflow: hidden;
+}
+.thumbnail img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 100%;
+    width: auto;
+    -webkit-transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+}
+.thumbnail img.portrait {
+    width: 100%;
+    height: auto;
+}
+

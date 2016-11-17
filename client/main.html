@@ -7,10 +7,13 @@
 
   <!--{{> uselessButton}}-->
 
-  {{> uploadForm}}
-
-  <div class ="pieces">
+  <!--{{> uploadForm}}-->
+  <div class ="thumbnails">
       {{> uploadedFiles}}
+  </div>
+    <div class="clear"></div>
+
+  <div class="piece">
       <ul>
           {{#each pieces}}
               {{> piece}}
@@ -20,7 +23,7 @@
 
 
   <form class="new-piece">
-      <!-- <input type="text" name="text" placeholder="Name of new Piece" /> -->
+      <input type="text" name="text" placeholder="Name of new Piece" />
       <input type="submit" name="submit" />
   </form>
 
@@ -36,19 +39,19 @@
 </template>
 
 
-<template name="piece"> <!-- DAS HIER SOLL MAL DAS PIECE OBJEKT WERDEN, WENN DEIN TOLLER SCHNUFFI DAS WIEDER ENTKREPELT HAT, WAS ER VERKREPELT HAT -->
+<template name="piece">
     <div class="piece">
-        <!--<span>{{ _id }}</span>-->
-        <span class="text">{{text}}</span>
+        <span>{{ _id }}</span> <!-- id of the piece -->
+        <div class="text">{{image_ids}}</div> <!--(hidden) appendix of image-ids goes here-->
 
         <div>
             <input class="fileInput" type="file" />
         </div>
         <div>
-            <button class="delete">delete (&times;)</button>  <!-- TODO: Löschen des Pieces, der Bilder und der Tags aus MongoDB -->
+            <button class="delete">delete (&times;)</button>  <!-- TODO: Loeschen des Pieces, der Bilder und der Tags aus MongoDB -->
         </div>
         <div>
-
+            <button class="save">save</button>  <!--save-button-->
         </div>
     </div>
 </template>
@@ -72,10 +75,13 @@
             <ul>
                 {{#each file in uploadedFiles.each}}
                     <!--{{ file._id }}-->
-                    <img src="{{file.link 'thumbnail140'}}" width="200px" alt="{{ file._id }}" /> <!-- Hier Kacheln! -->
+                    <div class="thumbnail">
+                        <img src="{{file.link 'thumbnail140'}}" width="200px" alt="{{ file._id }}" />
+                    </div>
                 {{/each}}
             </ul>
     <!--{{else}}-->
         <!--<div>No files uploaded, yet</div>-->
     <!--{{/if}}-->
 </template>
+

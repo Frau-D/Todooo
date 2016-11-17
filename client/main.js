@@ -3,6 +3,7 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { Mongo } from 'meteor/mongo';
 
 export const Pieces = new Mongo.Collection('pieces');
+export const Tacks = new Mongo.Collection('tacks');
 
 import './main.html';
 
@@ -10,8 +11,7 @@ var handleUpload = function (e, template) {
   if (e.currentTarget.files && e.currentTarget.files[0]) {
     console.warn("----> UPLOAD");
 
-    // We upload only one file, in case
-    // there was multiple files selected
+    // We upload only one file, in case there were multiple files selected
     var file = e.currentTarget.files[0];
     if (file) {
       var uploadInstance = Images.insert({
@@ -20,9 +20,7 @@ var handleUpload = function (e, template) {
         chunkSize: 'dynamic'
       }, false);
 
-      // uploadInstance.on('start', function() {
-      //   template.currentUpload.set(this);
-      // });
+      // uploadInstance.on('start', function() {template.currentUpload.set(this);});
 
       uploadInstance.on('end', function(error, fileObj) {
         if (error) {
@@ -90,21 +88,22 @@ Template.body.helpers({
   }
 });
 
-
+// create new piece
 Template.body.events({
   'submit .new-piece'(event) {
     // Prevent default browser form submit
     event.preventDefault();
 
     // Get value from form element
-    const target = event.target;
+    const target = event.target; // TODO: substitute this with the image_ids
 
-    // Insert a task into the collection
+    // Insert a piece into the collection
     Pieces.insert({
       text: event.target.text.value,
       image_ids:[],
       tag_ids: [],
-      createdAt: new Date() // current time // TODO: add tag-Id: 'tag_' + user-Id?
+      user_id: 'Conny', // TODO: substitute this with actual user-id
+      createdAt: new Date()
     });
 
     // Clear form
@@ -114,8 +113,15 @@ Template.body.events({
 
 Template.piece.events({
   'click .delete'() {
-    Pieces.remove(this._id);
-    
+    Pieces.remove(this._id); // removes piece-object from mongodb
+    // TODO: remove associated images
   },
-  'change .fileInput': handleUpload
+  'change .fileInput': handleUpload,
+  'click .save'() {
+    Pieces.update(this._id, {
+      $set: {image_ids: this.image_ids}
+    });
+  }
 });
+
+
