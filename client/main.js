@@ -104,7 +104,7 @@ Template.body.events({
       text: event.target.text.value,
       image_ids:[],
       tag_ids: [],
-      createdAt: new Date() // current time // TODO: add tag-Id: 'tag_' + createdAt + user-Id?
+      createdAt: new Date() // current time // TODO: add tag-Id: 'tag_' + user-Id?
     });
 
     // Clear form
