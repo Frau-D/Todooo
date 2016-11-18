@@ -5,8 +5,6 @@
 <body>
   <h1>Oh my gird...</h1>
 
-  <!--{{> uselessButton}}-->
-
   <!--{{> uploadForm}}-->
   <div class ="thumbnails">
       {{> uploadedFiles}}
@@ -24,7 +22,7 @@
 
   <form class="new-piece">
       <input type="text" name="text" placeholder="Name of new Piece" />
-      <input type="submit" name="submit" />
+      <input type="submit" name="submit" value="new piece" />
   </form>
 
 
@@ -33,26 +31,31 @@
 
 <!-- TEMPLATES TEMPLATES TEMPLATES TEMPLATES TEMPLATES TEMPLATES TEMPLATES -->
 
-<template name="uselessButton">
-    <button>Click Me</button>
-    <p>You've pressed the button {{counter}} times.</p>
-</template>
-
 
 <template name="piece">
     <div class="piece">
         <span>{{ _id }}</span> <!-- id of the piece -->
-        <div class="text">{{image_ids}}</div> <!--(hidden) appendix of image-ids goes here-->
+        <!-- <div class="text">Image-Ids: {{image_ids}}</div> -->
+        <!-- <div class="text">Tack-Ids: {{tag_ids}}</div> -->
 
+        {{#each tack_id in tag_ids}}
+            {{tack_id}}
+        {{/each}}
         <div>
             <input class="fileInput" type="file" />
         </div>
+        <form class="new-tack">
+            <input type="text" name="tacks" placeholder="Type to add tags..." />
+            <input type="submit" name="submit" value="add" />  <!--add tack-button-->
+        </form>
         <div>
             <button class="delete">delete (&times;)</button>  <!-- TODO: Loeschen des Pieces, der Bilder und der Tags aus MongoDB -->
         </div>
         <div>
             <button class="save">save</button>  <!--save-button-->
         </div>
+
+
     </div>
 </template>
 

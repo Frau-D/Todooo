@@ -7,12 +7,11 @@ export const Tacks = new Mongo.Collection('tacks');
 
 import './main.html';
 
-var handleUpload = function (e, template) {
-  if (e.currentTarget.files && e.currentTarget.files[0]) {
-    console.warn("----> UPLOAD");
+var handleUpload = function (event, template) {
+  if (event.currentTarget.files && event.currentTarget.files[0]) {
 
     // We upload only one file, in case there were multiple files selected
-    var file = e.currentTarget.files[0];
+    var file = event.currentTarget.files[0];
     if (file) {
       var uploadInstance = Images.insert({
         file: file,
@@ -29,7 +28,9 @@ var handleUpload = function (e, template) {
           //alert('File "' + fileObj.name + '" successfully uploaded: '+fileObj._id);
           template.data.image_ids.push(fileObj._id);
 
-          console.log(template);
+          Pieces.update(template.data._id, {
+            $set: {image_ids: template.data.image_ids}
+          });
 
         }
         //template.currentUpload.set(false);
@@ -39,24 +40,6 @@ var handleUpload = function (e, template) {
     }
   }
 };
-
-
-Template.uselessButton.onCreated(function uselessButtonOnCreated() {
-  // counter starts at 0
-  this.counter = new ReactiveVar(0);
-});
-Template.uselessButton.helpers({
-  counter() {
-    return Template.instance().counter.get();
-  }
-});
-Template.uselessButton.events({
-  'click button'(event, instance) {
-    // increment the counter when button is clicked
-    instance.counter.set(instance.counter.get() + 1);
-  }
-});
-
 
 Template.uploadedFiles.helpers({
   uploadedFiles: function () {
@@ -85,6 +68,9 @@ Template.uploadForm.events({
 Template.body.helpers({
   pieces() {
     return Pieces.find({});
+  },
+  tack_id() {
+    return Tacks.findOne(tack_)[text];
   }
 });
 
@@ -116,10 +102,19 @@ Template.piece.events({
     Pieces.remove(this._id); // removes piece-object from mongodb
     // TODO: remove associated images
   },
-  'change .fileInput': handleUpload,
-  'click .save'() {
+  'change .fileInput'(event, template){
+    handleUpload(event, template);
+  },
+  'submit .new-tack'(event) {
+    event.preventDefault();
+
+    const target = event.target;
+    var tag_id = Tacks.insert({
+      text: event.target.tacks.value,
+    });
+    this.tag_ids.push(tag_id);
     Pieces.update(this._id, {
-      $set: {image_ids: this.image_ids}
+      $set: {tag_ids: this.tag_ids}
     });
   }
 });
