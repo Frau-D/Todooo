@@ -42,39 +42,22 @@ var handleUpload = function (event, template) {
 };
 
 
-var getActualTagTexts = function () {
-
-};
-
-
-Template.uploadedFiles.helpers({
-    uploadedFiles: function () {
-        return Images.find(); // {}, {sort: { createdAt: -1 } } nach Uploaddatum sortieren...
-    }
-});
-
-
-Template.uploadForm.helpers({
-    currentUpload: function () {
-        return Template.instance().currentUpload.get();
-    }
-});
-
-
 Template.body.helpers({
     pieces() {
         return Pieces.find({});
     }
 });
 
-
-Template.uploadForm.events({
-    'change .fileInput': handleUpload
+Template.showTags.helpers({
+    tags() {
+        return Tacks.find({"_id": {"$in": this.tag_ids}});
+    }
 });
 
-
-Template.uploadForm.onCreated(function () {
-    this.currentUpload = new ReactiveVar(false);
+Template.showImages.helpers({
+    images() {
+        return Images.find({"_id": {"$in": this.image_ids}});
+    }
 });
 
 
@@ -84,22 +67,17 @@ Template.body.events({
         // Prevent default browser form submit
         event.preventDefault();
 
-        // Get value from form element
-        const target = event.target; // TODO: substitute this with the image_ids
-
         // Insert a piece into the collection
         Pieces.insert({
-            text: event.target.text.value,
             image_ids: [],
             tag_ids: [],
-            user_id: 'Conny', // TODO: substitute this with actual user-id
+            user_id: 'Conny',
+            // TODO: substitute this with actual user-id
             createdAt: new Date()
         });
-
-        // Clear form
-        target.text.value = '';
     }
 });
+
 
 Template.piece.events({
     'click .delete'() {
@@ -108,6 +86,7 @@ Template.piece.events({
     },
     'change .fileInput'(event, template){
         handleUpload(event, template);
+        //TODO: "No File Selected" zurücksetzen/entfernen
     },
     'submit .new-tack'(event) {
         event.preventDefault();
@@ -115,6 +94,7 @@ Template.piece.events({
         const tag_text = event.target.tacks.value;
         var tag_id;
 
+        // TODO: Groß-/Kleinschreibung ignorieren
         var tag_from_db = Tacks.findOne({text: tag_text});
         if (tag_from_db !== undefined) {
             tag_id = tag_from_db._id
@@ -131,26 +111,14 @@ Template.piece.events({
     }
 });
 
-Template.showTags.helpers({
-    tags() {
-        return Tacks.find({"_id": {"$in": this.tag_ids}});
-    }
-});
 
 Template.showTags.events({
     'click .deleteTag'(event) {
-        console.log(this);
         var deletedTag = event.target.dataset.tagId;
         var tagIndex = this.tag_ids.indexOf(deletedTag);
         this.tag_ids.splice(tagIndex, 1);
         Pieces.update(this._id, {
             $set: {tag_ids: this.tag_ids}
         });
-    },
-});
-
-Template.showImages.helpers({
-    images() {
-        return Images.find({"_id": {"$in": this.image_ids}});
     }
 });
