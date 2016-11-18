@@ -1,29 +1,28 @@
 <head>
-  <title>todooo</title>
+    <title>todooo</title>
 </head>
 
 <body>
-  <h1>Oh my gird...</h1>
+<!--<h1>Oh my gird...</h1>-->
 
-  <!--{{> uploadForm}}-->
-  <div class ="thumbnails">
-      {{> uploadedFiles}}
-  </div>
-    <div class="clear"></div>
+<!--{{> uploadForm}}-->
+<div class="thumbnails">
+    {{> uploadedFiles}}
+</div>
+<div class="clear"></div>
 
-  <div class="piece">
-      <ul>
-          {{#each pieces}}
-              {{> piece}}
-          {{/each}}
-      </ul>
-  </div>
+<div class="piece">
+    <ul>
+        {{#each pieces}}
+            {{> piece}}
+        {{/each}}
+    </ul>
+</div>
 
-
-  <form class="new-piece">
-      <input type="text" name="text" placeholder="Name of new Piece" />
-      <input type="submit" name="submit" value="new piece" />
-  </form>
+<form class="new-piece">
+    <input type="text" name="text" placeholder="Name of new Piece"/>
+    <input type="submit" name="submit" value="new piece"/>
+</form>
 
 
 </body>
@@ -34,22 +33,22 @@
 
 <template name="piece">
     <div class="piece">
-        <span>{{ _id }}</span> <!-- id of the piece -->
+
+        <!-- <span>{{ _id }}</span> -->
         <!-- <div class="text">Image-Ids: {{image_ids}}</div> -->
         <!-- <div class="text">Tack-Ids: {{tag_ids}}</div> -->
-
-        {{#each tack_id in tag_ids}}
-            {{tack_id}}
-        {{/each}}
+        <!-- {{tag_ids}} -->
+        {{> showTags}}
         <div>
-            <input class="fileInput" type="file" />
+            <input class="fileInput" type="file"/>
         </div>
         <form class="new-tack">
-            <input type="text" name="tacks" placeholder="Type to add tags..." />
-            <input type="submit" name="submit" value="add" />  <!--add tack-button-->
+            <input type="text" name="tacks" placeholder="Type to add tags..."/>
+            <input type="submit" name="submit" value="add"/>  <!--add tack-button-->
         </form>
         <div>
-            <button class="delete">delete (&times;)</button>  <!-- TODO: Loeschen des Pieces, der Bilder und der Tags aus MongoDB -->
+            <button class="delete">delete (&times;)</button>
+            <!-- TODO: Loeschen des Pieces, der Bilder und der Tags aus MongoDB -->
         </div>
         <div>
             <button class="save">save</button>  <!--save-button-->
@@ -60,31 +59,40 @@
 </template>
 
 
+<template name="showTags">
+    {{#each tag in tags}}
+        {{tag.text}}
+        <button class="deleteTag" data-tag-id="{{tag._id}}">&times;</button>
+    {{/each}}
+</template>
+
+
 <template name="uploadForm">
     <div class="container">
-        <!--{{#with currentUpload}}-->
+    <!--{{#with currentUpload}}-->
         <!--Uploading <b>{{file.name}}</b>:-->
         <!--<span id="progress">{{progress.get}}%</span>-->
-    <!--{{else}}-->
-        <input class="fileInput" type="file" />
-        <p><small>Upload file in <code>jpeg</code> or <code>png</code> format, with size less or equal to 10MB</small></p>
-        <!--{{/with}}-->
+            <!--{{else}}-->
+        <input class="fileInput" type="file"/>
+        <p>
+            <small>Upload file in <code>jpeg</code> or <code>png</code> format, with size less or equal to 10MB</small>
+        </p>
+            <!--{{/with}}-->
     </div>
 </template>
 
 
 <template name="uploadedFiles">
-    <!--{{#if uploadedFiles.count}}-->
-            <ul>
-                {{#each file in uploadedFiles.each}}
-                    <!--{{ file._id }}-->
-                    <div class="thumbnail">
-                        <img src="{{file.link 'thumbnail140'}}" width="200px" alt="{{ file._id }}" />
-                    </div>
-                {{/each}}
-            </ul>
-    <!--{{else}}-->
-        <!--<div>No files uploaded, yet</div>-->
-    <!--{{/if}}-->
+<!--{{#if uploadedFiles.count}}-->
+    <ul>
+        {{#each file in uploadedFiles.each}}
+            <!--{{ file._id }}-->
+            <div class="thumbnail">
+                <img src="{{file.link 'thumbnail140'}}" width="200px" alt="{{ file._id }}"/>
+            </div>
+        {{/each}}
+    </ul>
+        <!--{{else}}-->
+    <!--<div>No files uploaded, yet</div>-->
+        <!--{{/if}}-->
 </template>
-
