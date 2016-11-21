@@ -101,7 +101,7 @@ Template.piece.events({
         } else {
             tag_id = Tacks.insert({text: tag_text});
         }
-        if(this.tag_ids.indexOf(tag_id) == -1){ //prüfen ob's nicht drin
+        if (this.tag_ids.indexOf(tag_id) == -1) { //prüfen ob's nicht drin
             this.tag_ids.push(tag_id);
             Pieces.update(this._id, {
                 $set: {tag_ids: this.tag_ids}
