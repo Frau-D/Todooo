@@ -60,9 +60,15 @@ Template.showImages.helpers({
     }
 });
 
+Template.showAllImages.helpers({
+    firstImages() {
+        return Images.find();
+    }
+});
 
-// create new piece
+
 Template.body.events({
+    //create new piece
     'submit .new-piece'(event) {
         // Prevent default browser form submit
         event.preventDefault();
@@ -75,6 +81,10 @@ Template.body.events({
             // TODO: substitute this with actual user-id
             createdAt: new Date()
         });
+    },
+    //show overview
+    'click .overview' (event){
+        console.log(this);
     }
 });
 

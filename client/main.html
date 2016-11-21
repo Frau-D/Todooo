@@ -4,6 +4,11 @@
 
 <body>
 
+<button class="overview">overview</button>
+
+<div>
+    {{> allClothes}}
+</div>
 <div class="clear"></div>
 
 <div class="piece">
@@ -25,6 +30,12 @@
 <!-- TEMPLATES TEMPLATES TEMPLATES TEMPLATES TEMPLATES TEMPLATES TEMPLATES -->
 
 
+<template name="allClothes">
+    {{>showAllImages}}
+</template>
+
+
+
 <template name="piece">
     <div class="piece">
         {{>showImages}}
@@ -40,8 +51,6 @@
         <div>
             <button class="delete">delete piece (&times;)</button>
         </div>
-
-
     </div>
 </template>
 
@@ -65,6 +74,15 @@
 
 <template name="showImages">
     {{#each image in images.each}}
+        <div class="thumbnail">
+            <img src="{{image.link 'thumbnail140'}}" width="200px" alt="{{ image._id }}"/>
+        </div>
+    {{/each}}
+</template>
+
+
+<template name="showAllImages">
+    {{#each image in firstImages.each}}
         <div class="thumbnail">
             <img src="{{image.link 'thumbnail140'}}" width="200px" alt="{{ image._id }}"/>
         </div>
