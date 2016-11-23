@@ -48,6 +48,19 @@ Template.body.helpers({
     }
 });
 
+Template.allClothes.helpers({
+    pieces() {
+        return Pieces.find({});
+    },
+    piece_id() {
+        return this._id;
+    },
+    first_image() {
+        return Images.find({"_id": {"$in": [this.image_ids[0]]}});
+    }
+});
+
+
 Template.showTags.helpers({
     tags() {
         return Tacks.find({"_id": {"$in": this.tag_ids}});
@@ -81,11 +94,11 @@ Template.body.events({
             // TODO: substitute this with actual user-id
             createdAt: new Date()
         });
-    },
+    }/*,
     //show overview
     'click .overview' (event){
         console.log(this);
-    }
+    }*/
 });
 
 
@@ -131,4 +144,12 @@ Template.showTags.events({
             $set: {tag_ids: this.tag_ids}
         });
     }
+});
+
+
+Template.allClothes.events({
+    'click .overviewImage'(event) {
+        piece_id = event.target.dataset.pieceid;
+    }
+
 });

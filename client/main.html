@@ -6,10 +6,12 @@
 
 <button class="overview">overview</button>
 
-<div>
-    {{> allClothes}}
-</div>
-<div class="clear"></div>
+{{> allClothes}}
+
+<form class="new-piece">
+    <input type="submit" name="submit" value="new piece"/>
+</form>
+
 
 <div class="piece">
     <ul>
@@ -19,9 +21,6 @@
     </ul>
 </div>
 
-<form class="new-piece">
-    <input type="submit" name="submit" value="new piece"/>
-</form>
 
 
 </body>
@@ -31,7 +30,15 @@
 
 
 <template name="allClothes">
-    {{>showAllImages}}
+    <div class="overview">
+        {{#each pieces}}
+            {{#each image in first_image.each}}
+                <div class="overviewImage"
+                     style="background:url({{image.link 'thumbnail140'}}) 50% 50% no-repeat; background-size:cover;"
+                     data-pieceID="{{ piece_id }}" ></div>
+            {{/each}}
+        {{/each}}
+    </div>
 </template>
 
 

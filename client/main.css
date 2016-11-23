@@ -3,6 +3,18 @@
     background-color: chartreuse;
 }
 
+.overview {
+    display: flex;
+    flex-direction: row;
+    /*justify-content: space-around;*/
+}
+
+.overviewImage {
+    width: 200px;
+    height: 200px;
+}
+
+
 .clear {
     clear:left;
 }
@@ -13,7 +25,9 @@
     margin-top: 1em;
 }
 
+
 .thumbnail {
+    /* research on flexbox for auto-floating div */
     float: left;
     position: relative;
     width: 200px;
