@@ -45,6 +45,9 @@ var handleUpload = function (event, template) {
 Template.body.helpers({
     pieces() {
         return Pieces.find({});
+    },
+    showOverview() {
+        return Session.get('showOverview');
     }
 });
 
@@ -94,11 +97,7 @@ Template.body.events({
             // TODO: substitute this with actual user-id
             createdAt: new Date()
         });
-    }/*,
-    //show overview
-    'click .overview' (event){
-        console.log(this);
-    }*/
+    }
 });
 
 
@@ -152,4 +151,12 @@ Template.allClothes.events({
         piece_id = event.target.dataset.pieceid;
     }
 
+});
+
+
+Template.overviewButton.events({
+    'click .overview'(event) {
+        event.preventDefault();
+        Session.set('showOverview', true);
+    }
 });

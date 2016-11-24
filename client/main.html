@@ -4,30 +4,33 @@
 
 <body>
 
-<button class="overview">overview</button>
-
-{{> allClothes}}
-
-<form class="new-piece">
-    <input type="submit" name="submit" value="new piece"/>
-</form>
-
-
-<div class="piece">
-    <ul>
-        {{#each pieces}}
-            {{> piece}}
-        {{/each}}
-    </ul>
-</div>
-
-
+{{#if showOverview}}
+    {{> allClothes}}
+    <form class="new-piece">
+        <input type="submit" name="submit" value="new piece"/>
+    </form>
+{{else}}
+    {{> overviewButton}}
+    <div class="piece">
+        <ul>
+            {{#each pieces}}
+                {{> piece}}
+            {{/each}}
+        </ul>
+    </div>
+{{/if}}
 
 </body>
 
 
 <!-- TEMPLATES TEMPLATES TEMPLATES TEMPLATES TEMPLATES TEMPLATES TEMPLATES -->
 
+
+<template name="overviewButton">
+    <div>
+        <button class="overview">overview</button>
+    </div>
+</template>
 
 <template name="allClothes">
     <div class="overview">
