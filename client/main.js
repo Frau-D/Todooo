@@ -61,13 +61,18 @@ Template.body.helpers({
 
 Template.allClothes.helpers({
     pieces() {
-        return Pieces.find({});
+        return Pieces.find(
+            {},
+            { sort: { createdAt: -1 } }
+        );
     },
     piece_id() {
         return this._id;
     },
     first_image() {
-        return Images.find({"_id": {"$in": [this.image_ids[0]]}});
+        return Images.find(
+            {"_id": {"$in": [this.image_ids[0]]}},
+        );
     }
 });
 
