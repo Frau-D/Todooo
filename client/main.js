@@ -42,12 +42,18 @@ var handleUpload = function (event, template) {
 };
 
 
+
+
+// HELPERS HELPERS HELPERS HELPERS HELPERS HELPERS HELPERS 
+
+
 Template.body.helpers({
-    pieces() {
-        return Pieces.find({});
-    },
     showOverview() {
         return Session.get('showOverview');
+    },
+    pieces() {
+        console.log(Pieces.find({}));
+        return Pieces.find({});
     }
 });
 
@@ -64,9 +70,9 @@ Template.allClothes.helpers({
 });
 
 
-Template.showTags.helpers({
-    tags() {
-        return Tacks.find({"_id": {"$in": this.tag_ids}});
+Template.piece.helpers({
+    piece_id() {
+        return Pieces.find({"_id": {"$in": this.piece_id}});
     }
 });
 
@@ -76,11 +82,14 @@ Template.showImages.helpers({
     }
 });
 
-Template.showAllImages.helpers({
-    firstImages() {
-        return Images.find();
+Template.showTags.helpers({
+    tags() {
+        return Tacks.find({"_id": {"$in": this.tag_ids}});
     }
 });
+
+
+// EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS 
 
 
 Template.body.events({
@@ -97,13 +106,15 @@ Template.body.events({
             // TODO: substitute this with actual user-id
             createdAt: new Date()
         });
+        Session.set('showOverview', false);
     }
 });
 
 
 Template.piece.events({
+    // remove piece-object from mongodb
     'click .delete'() {
-        Pieces.remove(this._id); // removes piece-object from mongodb
+        Pieces.remove(this._id); 
         // TODO: remove associated images
     },
     'change .fileInput'(event, template){
@@ -148,9 +159,10 @@ Template.showTags.events({
 
 Template.allClothes.events({
     'click .overviewImage'(event) {
+        Session.set('showOverview', false);
         piece_id = event.target.dataset.pieceid;
+        console.log(piece_id);
     }
-
 });
 
 

@@ -32,6 +32,8 @@
     </div>
 </template>
 
+
+
 <template name="allClothes">
     <div class="overview">
         {{#each pieces}}
@@ -67,8 +69,7 @@
 
 <template name="showTags">
     {{#each tag in tags}}
-        {{tag.text}}
-        <button class="deleteTag" data-tag-id="{{tag._id}}">&times;</button>
+        <button class="deleteTag" data-tag-id="{{tag._id}}">{{tag.text}}   &times;</button>
     {{/each}}
 </template>
 
@@ -84,15 +85,10 @@
 
 <template name="showImages">
     {{#each image in images.each}}
-        <div class="thumbnail">
-            <img src="{{image.link 'thumbnail140'}}" width="200px" alt="{{ image._id }}"/>
+        <div>
+            <button class="delete">delete pic (doesn't work yet) (&times;)</button>
         </div>
-    {{/each}}
-</template>
-
-
-<template name="showAllImages">
-    {{#each image in firstImages.each}}
+    <!-- TODO: implement delete function -->
         <div class="thumbnail">
             <img src="{{image.link 'thumbnail140'}}" width="200px" alt="{{ image._id }}"/>
         </div>
