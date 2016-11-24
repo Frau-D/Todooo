@@ -52,9 +52,11 @@ Template.body.helpers({
         return Session.get('showOverview');
     },
     pieces() {
-        console.log(Pieces.find({}));
-        return Pieces.find({});
+        var piece_id = Session.get('clickedPieceId');
+        console.log('---> ' + piece_id);
+        return Pieces.find({"_id": {"$in": [piece_id]}});
     }
+
 });
 
 Template.allClothes.helpers({
@@ -70,11 +72,6 @@ Template.allClothes.helpers({
 });
 
 
-Template.piece.helpers({
-    piece_id() {
-        return Pieces.find({"_id": {"$in": this.piece_id}});
-    }
-});
 
 Template.showImages.helpers({
     images() {
@@ -99,13 +96,14 @@ Template.body.events({
         event.preventDefault();
 
         // Insert a piece into the collection
-        Pieces.insert({
+        var piece_id = Pieces.insert({
             image_ids: [],
             tag_ids: [],
             user_id: 'Conny',
             // TODO: substitute this with actual user-id
             createdAt: new Date()
         });
+        Session.set('clickedPieceId', piece_id);
         Session.set('showOverview', false);
     }
 });
@@ -159,9 +157,10 @@ Template.showTags.events({
 
 Template.allClothes.events({
     'click .overviewImage'(event) {
-        Session.set('showOverview', false);
         piece_id = event.target.dataset.pieceid;
-        console.log(piece_id);
+        console.log(document.getElementById(piece_id));
+        Session.set('clickedPieceId', piece_id);
+        Session.set('showOverview', false);
     }
 });
 

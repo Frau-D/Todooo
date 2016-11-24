@@ -40,7 +40,7 @@
             {{#each image in first_image.each}}
                 <div class="overviewImage"
                      style="background:url({{image.link 'thumbnail140'}}) 50% 50% no-repeat; background-size:cover;"
-                     data-pieceID="{{ piece_id }}" ></div>
+                     data-pieceid="{{ piece_id }}" ></div>
             {{/each}}
         {{/each}}
     </div>
@@ -49,8 +49,8 @@
 
 
 <template name="piece">
-    <div class="piece">
-        {{>showImages}}
+    <div class="piece" id="{{ this._id }}">
+        {{> showImages }}
         <div class="clear"></div>
         {{> showTags}}
         <div>
