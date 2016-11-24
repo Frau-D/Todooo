@@ -3,7 +3,7 @@
     background-color: chartreuse;
 }
 
-.overview {
+.flex-row {
     display: flex;
     flex-direction: row;
     /*justify-content: space-around;*/
@@ -28,24 +28,31 @@
 
 .thumbnail {
     /* research on flexbox for auto-floating div */
-    float: left;
-    position: relative;
+
     width: 200px;
     height: 200px;
-    overflow: hidden;
+
 }
 .thumbnail img {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    height: 100%;
-    width: auto;
-    -webkit-transform: translate(-50%,-50%);
-    -ms-transform: translate(-50%,-50%);
-    transform: translate(-50%,-50%);
+
 }
 .thumbnail img.portrait {
     width: 100%;
     height: auto;
 }
 
+
+
+.detailImage {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    height: 200px;
+    width: 200px;
+}
+
+.detailImage button {
+    height: 20px;
+    width: 20px;
+    color: red;
+}

@@ -28,14 +28,14 @@
 
 <template name="overviewButton">
     <div>
-        <button class="overview">overview</button>
+        <button id="overview">overview</button>
     </div>
 </template>
 
 
 
 <template name="allClothes">
-    <div class="overview">
+    <div class="flex-row">
         {{#each pieces}}
             {{#each image in first_image.each}}
                 <div class="overviewImage"
@@ -50,7 +50,9 @@
 
 <template name="piece">
     <div class="piece" id="{{ this._id }}">
-        {{> showImages }}
+        <div class="flex-row">
+            {{> showImages }}
+        </div>
         <div class="clear"></div>
         {{> showTags}}
         <div>
@@ -85,12 +87,10 @@
 
 <template name="showImages">
     {{#each image in images.each}}
-        <div>
-            <button class="delete">delete pic (doesn't work yet) (&times;)</button>
-        </div>
-    <!-- TODO: implement delete function -->
-        <div class="thumbnail">
-            <img src="{{image.link 'thumbnail140'}}" width="200px" alt="{{ image._id }}"/>
+        <div class="detailImage"
+             style="background:url({{image.link 'thumbnail140'}}) 50% 50% no-repeat; background-size:cover;"
+             data-pieceid="{{ piece_id }}" >
+            <button class="deleteImage" data-imageid="{{ image._id }}">&times;</button>
         </div>
     {{/each}}
 </template>

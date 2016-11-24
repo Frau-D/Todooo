@@ -7,6 +7,11 @@ export const Tacks = new Mongo.Collection('tacks');
 
 import './main.html';
 
+Meteor.startup(() => {
+    // code to run on server at startup
+    Session.set('showOverview', true);
+});
+
 var handleUpload = function (event, template) {
     if (event.currentTarget.files && event.currentTarget.files[0]) {
 
@@ -53,7 +58,6 @@ Template.body.helpers({
     },
     pieces() {
         var piece_id = Session.get('clickedPieceId');
-        console.log('---> ' + piece_id);
         return Pieces.find({"_id": {"$in": [piece_id]}});
     }
 
@@ -163,7 +167,6 @@ Template.showTags.events({
 Template.allClothes.events({
     'click .overviewImage'(event) {
         piece_id = event.target.dataset.pieceid;
-        console.log(document.getElementById(piece_id));
         Session.set('clickedPieceId', piece_id);
         Session.set('showOverview', false);
     }
@@ -171,8 +174,21 @@ Template.allClothes.events({
 
 
 Template.overviewButton.events({
-    'click .overview'(event) {
+    'click #overview'(event) {
         event.preventDefault();
         Session.set('showOverview', true);
+    }
+});
+
+
+Template.showImages.events({
+    'click .deleteImage'(event) {
+        //Images.remove(this._id);
+        var deletedImage = event.target.dataset.imageid;
+        var imageIndex = this.image_ids.indexOf(deletedImage);
+        this.image_ids.splice(imageIndex, 1); // deletes ONE element on position of imageIndex
+        Pieces.update(this._id, {
+            $set: {image_ids: this.image_ids}
+        });
     }
 });
