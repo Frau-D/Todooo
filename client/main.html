@@ -35,6 +35,7 @@
 
 
 <template name="allClothes">
+    {{>filterByTag}}
     <div class="flex-row">
         {{#each pieces}}
             {{#each image in first_image.each}}
@@ -46,6 +47,17 @@
     </div>
 </template>
 
+
+<template name="filterByTag">
+    {{#each tag in allExistingTags}}
+        <button class="filter-tag" data-tag-id="{{tag._id}}">{{tag.text}}</button>
+    {{/each}}
+    <div class="ui-widget">
+        <label for="tags"></label>
+        <input id="tags" placeholder="Search by tags...">
+        <button class="filter">add filter</button>
+    </div>
+</template>
 
 
 <template name="piece">

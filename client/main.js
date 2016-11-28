@@ -80,17 +80,27 @@ Template.allClothes.helpers({
     }
 });
 
+Template.filterByTag.helpers({
+    allExistingTags() {
+        console.log(Tacks.find({}));
+        return Tacks.find({});
+    }
 
+});
 
 Template.showImages.helpers({
     images() {
-        return Images.find({"_id": {"$in": this.image_ids}});
+        return Images.find(
+            {"_id": {"$in": this.image_ids}}
+        );
     }
 });
 
 Template.showTags.helpers({
     tags() {
-        return Tacks.find({"_id": {"$in": this.tag_ids}});
+        return Tacks.find(
+            {"_id": {"$in": this.tag_ids}}
+        );
     }
 });
 
