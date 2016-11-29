@@ -85,7 +85,6 @@ Template.filterByTag.helpers({
         console.log(Tacks.find({}));
         return Tacks.find({});
     }
-
 });
 
 Template.showImages.helpers({
