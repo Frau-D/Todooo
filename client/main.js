@@ -49,7 +49,42 @@ var handleUpload = function (event, template) {
 
 
 
-// HELPERS HELPERS HELPERS HELPERS HELPERS HELPERS HELPERS 
+
+Template.filterByTag.rendered = function(){
+    console.log('autocompleteWidget rendered');
+    $( function() {
+        var availableTags = [
+            "ActionScript",
+            "AppleScript",
+            "Asp",
+            "BASIC",
+            "C",
+            "C++",
+            "Clojure",
+            "COBOL",
+            "ColdFusion",
+            "Erlang",
+            "Fortran",
+            "Groovy",
+            "Haskell",
+            "Java",
+            "JavaScript",
+            "Lisp",
+            "Perl",
+            "PHP",
+            "Python",
+            "Ruby",
+            "Scala",
+            "Scheme"
+        ];
+        $( "#tags_autocomplete" ).autocomplete({
+            source: availableTags
+        });
+    } );
+};
+
+
+// HELPERS HELPERS HELPERS HELPERS HELPERS HELPERS HELPERS
 
 
 Template.body.helpers({
