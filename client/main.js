@@ -46,46 +46,33 @@ var handleUpload = function (event, template) {
     }
 };
 
-
-
+var refresh_autocomplete = function(){
+    var availableTags = [];
+    Tacks.find({}).fetch().forEach(function(element, index){
+        availableTags.push(element.text);
+    });
+    $( "#tags_autocomplete" ).autocomplete({
+        source: availableTags
+    });
+};
 
 
 Template.filterByTag.rendered = function(){
-    console.log('autocompleteWidget rendered');
-    $( function() {
-        var availableTags = [
-            "ActionScript",
-            "AppleScript",
-            "Asp",
-            "BASIC",
-            "C",
-            "C++",
-            "Clojure",
-            "COBOL",
-            "ColdFusion",
-            "Erlang",
-            "Fortran",
-            "Groovy",
-            "Haskell",
-            "Java",
-            "JavaScript",
-            "Lisp",
-            "Perl",
-            "PHP",
-            "Python",
-            "Ruby",
-            "Scala",
-            "Scheme"
-        ];
-        $( "#tags_autocomplete" ).autocomplete({
-            source: availableTags
-        });
-    } );
+    // refresh the autocompletion box when details page is closed
+    // and overview got rendered again
+    refresh_autocomplete();
 };
 
 
 // HELPERS HELPERS HELPERS HELPERS HELPERS HELPERS HELPERS
 
+
+Template.filterByTag.helpers({
+    allExistingTags() {
+        refresh_autocomplete();
+        return Tacks.find({});
+    }
+});
 
 Template.body.helpers({
     showOverview() {
@@ -112,13 +99,6 @@ Template.allClothes.helpers({
         return Images.find(
             {"_id": {"$in": [this.image_ids[0]]}},
         );
-    }
-});
-
-Template.filterByTag.helpers({
-    allExistingTags() {
-        console.log(Tacks.find({}));
-        return Tacks.find({});
     }
 });
 
