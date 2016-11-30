@@ -42,10 +42,10 @@
     {{#each tag in allExistingTags}}
         <button class="filter-tag" data-tag-id="{{tag._id}}">{{tag.text}}</button>
     {{/each}}
-    <div class="ui-widget">
-        <input id="tags_autocomplete" type="text" name="filtered_tacks" placeholder="Search by tags...">
+    <form class="ui-widget">
+        <input id="tags_autocomplete" type="text" name="filtered_tack" placeholder="Search by tags...">
         <input type="submit" class="new-filter" value="add"/>
-    </div>
+    </form>
 </template>
 
 

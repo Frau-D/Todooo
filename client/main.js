@@ -100,14 +100,22 @@ Template.filterByTag.helpers({
 });
 
 Template.filterByTag.events({
-    'submit .new-filter'(event) {
+    'submit .ui-widget'(event) {
         // Prevent default browser form submit
         event.preventDefault();
 
-        const filter_text = event.target.filtered_tacks.value;
-        //this.filter_text.push(filter_text);
-        console.log(filter_text);
-        //Session.set('filters', filter_text);
+        var filter_text = event.target.filtered_tack.value;
+        var tag_from_db = Tacks.findOne({text: filter_text});
+        //console.log(tag_from_db);
+        if (tag_from_db !== undefined) {
+            filter_text = [filter_text];
+            console.log(filter_text);
+            //Session.set('filters', filter_text);
+        } else {
+            console.log('No such tag!');
+            // TODO: add error message
+        }
+        event.target.filtered_tack.value = '';
     }
 });
 
