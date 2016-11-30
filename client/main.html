@@ -22,16 +22,7 @@
 </body>
 
 
-<!-- TEMPLATES TEMPLATES TEMPLATES TEMPLATES TEMPLATES TEMPLATES TEMPLATES -->
-
-
-<template name="overviewButton">
-    <div>
-        <button id="overview">overview</button>
-    </div>
-</template>
-
-
+<!----------------- in OVERVIEW ----------------->
 
 <template name="allClothes">
     {{>filterByTag}}
@@ -52,12 +43,13 @@
         <button class="filter-tag" data-tag-id="{{tag._id}}">{{tag.text}}</button>
     {{/each}}
     <div class="ui-widget">
-        <label for="tags_autocomplete"></label>
-        <input id="tags_autocomplete" placeholder="Search by tags...">
-        <!--<button class="filter">add filter</button>-->
+        <input id="tags_autocomplete" type="text" name="filtered_tacks" placeholder="Search by tags...">
+        <input type="submit" class="new-filter" value="add"/>
     </div>
 </template>
 
+
+<!----------------- in PIECE VIEW ----------------->
 
 <template name="piece">
     <div class="piece" id="{{ this._id }}">
@@ -80,6 +72,17 @@
 </template>
 
 
+<template name="showImages">
+    {{#each image in images.each}}
+        <div class="detailImage"
+             style="background:url({{image.link 'thumbnail140'}}) 50% 50% no-repeat; background-size:cover;"
+             data-pieceid="{{ piece_id }}" >
+            <button class="deleteImage" data-imageid="{{ image._id }}">&times;</button>
+        </div>
+    {{/each}}
+</template>
+
+
 <template name="showTags">
     {{#each tag in tags}}
         <button class="deleteTag" data-tag-id="{{tag._id}}">{{tag.text}}   &times;</button>
@@ -87,21 +90,17 @@
 </template>
 
 
+<template name="overviewButton">
+    <div>
+        <button id="overview">overview</button>
+    </div>
+</template>
+
+
 <template name="uploadedFiles">
     {{#each file in uploadedFiles.each}}
         <div class="thumbnail">
             <img src="{{file.link 'thumbnail140'}}" width="200px" alt="{{ file._id }}"/>
-        </div>
-    {{/each}}
-</template>
-
-
-<template name="showImages">
-    {{#each image in images.each}}
-        <div class="detailImage"
-             style="background:url({{image.link 'thumbnail140'}}) 50% 50% no-repeat; background-size:cover;"
-             data-pieceid="{{ piece_id }}" >
-            <button class="deleteImage" data-imageid="{{ image._id }}">&times;</button>
         </div>
     {{/each}}
 </template>
