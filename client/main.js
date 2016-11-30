@@ -79,6 +79,8 @@ Template.allClothes.events({
 
 // OVERVIEW -> FILTER 
 
+allCurrentFilters = new Set();
+
 var refresh_autocomplete = function(){
     var availableTags = [];
     Tacks.find({}).fetch().forEach(function(element, index,){
@@ -104,16 +106,17 @@ Template.filterByTag.events({
         // Prevent default browser form submit
         event.preventDefault();
 
-        var filter_text = event.target.filtered_tack.value;
+        var filter_text = event.target.filtered_tack.value.toLowerCase();
         var tag_from_db = Tacks.findOne({text: filter_text});
         //console.log(tag_from_db);
         if (tag_from_db !== undefined) {
-            filter_text = [filter_text];
-            console.log(filter_text);
-            //Session.set('filters', filter_text);
+            allCurrentFilters.add(tag_from_db._id);
+            /* crayz syntax to create an array from a Set */
+            console.log([...allCurrentFilters.values()]);
+
         } else {
             console.log('No such tag!');
-            // TODO: add error message
+            // TODO: add ui error message
         }
         event.target.filtered_tack.value = '';
     }
@@ -177,22 +180,33 @@ Template.piece.events({
     'submit .new-tack'(event) {
         event.preventDefault();
 
-        const tag_text = event.target.tacks.value;
+        const tag_text = event.target.tacks.value.toLowerCase();
+        const piece_id = this._id;
         var tag_id;
+        console.log(piece_id);
 
         // TODO: Groß-/Kleinschreibung ignorieren
         var tag_from_db = Tacks.findOne({text: tag_text});
         if (tag_from_db !== undefined) {
-            tag_id = tag_from_db._id
+            // update list of piece_ids for this tag
+            tag_id = tag_from_db._id;
+            if (tag_from_db.piece_ids.indexOf(piece_id) == -1){ //  only add piece_id when not already in piece_ids
+                tag_from_db.piece_ids.push(piece_id);
+                Tacks.update(tag_id, {$set: {piece_ids: tag_from_db.piece_ids}});
+            }
         } else {
-            tag_id = Tacks.insert({text: tag_text});
-        }
-        if (this.tag_ids.indexOf(tag_id) == -1) { //prüfen ob's nicht drin
-            this.tag_ids.push(tag_id);
-            Pieces.update(this._id, {
-                $set: {tag_ids: this.tag_ids}
+            // insert new tag into Tacks-collection
+            tag_id = Tacks.insert({
+                text: tag_text,
+                piece_ids: [piece_id]
             });
         }
+        // check if it's not already in tag_ids of the piece
+        if (this.tag_ids.indexOf(tag_id) == -1) {
+            this.tag_ids.push(tag_id);
+            Pieces.update(piece_id, {$set: {tag_ids: this.tag_ids}});
+        }
+        // clear input field
         event.target.tacks.value = '';
     }
 });
@@ -235,12 +249,21 @@ Template.showTags.helpers({
 
 Template.showTags.events({
     'click .deleteTag'(event) {
-        var deletedTag = event.target.dataset.tagId;
-        var tagIndex = this.tag_ids.indexOf(deletedTag);
+        const piece_id = this._id;
+        const tag_id_to_delete = event.target.dataset.tagId;
+        var tagIndex = this.tag_ids.indexOf(tag_id_to_delete);
         this.tag_ids.splice(tagIndex, 1);
-        Pieces.update(this._id, {
-            $set: {tag_ids: this.tag_ids}
-        });
+        Pieces.update(piece_id, {$set: {tag_ids: this.tag_ids}});
+
+        var tag_from_db = Tacks.findOne({_id: tag_id_to_delete});
+        // remove pice_id from tag_from_db.piece_ids
+        tag_from_db.piece_ids.splice(tag_from_db.piece_ids.indexOf(piece_id),1);
+        if(tag_from_db.piece_ids.length > 0){
+            Tacks.update(tag_id_to_delete, {$set: {piece_ids: tag_from_db.piece_ids}});
+        }else{
+            // if last piece_id is removed: delete tag
+            Tacks.remove(tag_id_to_delete);
+        }
     }
 });
 
