@@ -4,11 +4,13 @@ import {Mongo} from 'meteor/mongo';
 
 export const Pieces = new Mongo.Collection('pieces');
 export const Tacks = new Mongo.Collection('tacks');
+export const Filters = new Mongo.Collection('activeFilters');
 
 import './main.html';
 
 Meteor.startup(() => {
     // code to run on server at startup
+    Meteor.call('removeAllFilters');
     Session.set('showOverview', true);
 });
 
@@ -38,10 +40,10 @@ Template.body.events({
             image_ids: [],
             tag_ids: [],
             user_id: 'Conny',
-            // TODO: substitute this with actual user-id
+// TODO: substitute this with actual user-id
             createdAt: new Date()
         });
-        Session.set('clickedPieceId', piece_id);
+        //Session.set('clickedPieceId', piece_id);
         Session.set('showOverview', false);
     }
 });
@@ -81,6 +83,7 @@ Template.allClothes.events({
 
 allCurrentFilters = new Set();
 
+
 var refresh_autocomplete = function(){
     var availableTags = [];
     Tacks.find({}).fetch().forEach(function(element, index,){
@@ -91,13 +94,20 @@ var refresh_autocomplete = function(){
     });
 };
 
-Template.filterByTag.helpers({
-    allExistingTags() {         //TODO: remove as soon as filteredTags() works
-        refresh_autocomplete();
-        return Tacks.find({});
-    },
+Template.activeFilters.helpers({
     filteredTags() {
         //refresh_autocomplete();
+        console.log('----->>>>>>');
+        console.log([...allCurrentFilters.values()]);
+        console.log(Filters.find());
+        return Filters.find();
+    }
+});
+
+Template.activeFilters.events({
+    'click .filter-tag'() {
+
+        Meteor.call('removeOneFilter');
     }
 });
 
@@ -108,15 +118,17 @@ Template.filterByTag.events({
 
         var filter_text = event.target.filtered_tack.value.toLowerCase();
         var tag_from_db = Tacks.findOne({text: filter_text});
-        //console.log(tag_from_db);
         if (tag_from_db !== undefined) {
+            Filters.insert({
+                text: filter_text
+            });
             allCurrentFilters.add(tag_from_db._id);
-            /* crayz syntax to create an array from a Set */
+            /* crazy syntax to create an array from a Set */
             console.log([...allCurrentFilters.values()]);
-
+// TODO: temporarily remove already selected Filters from availableTags
         } else {
             console.log('No such tag!');
-            // TODO: add ui error message
+// TODO: add ui error message
         }
         event.target.filtered_tack.value = '';
     }
@@ -171,11 +183,11 @@ Template.piece.events({
     // remove piece-object from mongodb
     'click .delete'() {
         Pieces.remove(this._id);
-        // TODO: remove associated images
+// TODO: remove associated images
     },
     'change .fileInput'(event, template){
         handleUpload(event, template);
-        //TODO: "No File Selected" zurücksetzen/entfernen
+//TODO: "No File Selected" zurücksetzen/entfernen
     },
     'submit .new-tack'(event) {
         event.preventDefault();
@@ -185,7 +197,6 @@ Template.piece.events({
         var tag_id;
         console.log(piece_id);
 
-        // TODO: Groß-/Kleinschreibung ignorieren
         var tag_from_db = Tacks.findOne({text: tag_text});
         if (tag_from_db !== undefined) {
             // update list of piece_ids for this tag

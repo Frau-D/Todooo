@@ -25,7 +25,9 @@
 <!----------------- in OVERVIEW ----------------->
 
 <template name="allClothes">
-    {{>filterByTag}}
+
+        {{>filterByTag}}
+
     <div class="flex-row">
         {{#each pieces}}
             {{#each image in first_image.each}}
@@ -39,14 +41,21 @@
 
 
 <template name="filterByTag">
-    {{#each tag in allExistingTags}}
-        <button class="filter-tag" data-tag-id="{{tag._id}}">{{tag.text}}</button>
-    {{/each}}
+    <div id="filter-form">
+        {{>activeFilters}}
+    </div>
     <form class="ui-widget">
         <input id="tags_autocomplete" type="text" name="filtered_tack" placeholder="Search by tags...">
         <input type="submit" class="new-filter" value="add"/>
     </form>
 </template>
+
+<template name="activeFilters">
+    {{#each tag in filteredTags}}
+        <button class="filter-tag" data-tag-id="{{tag._id}}">{{tag.text}}   &times;</button>
+    {{/each}}
+</template>
+
 
 
 <!----------------- in PIECE VIEW ----------------->
