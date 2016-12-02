@@ -5,14 +5,11 @@ new Mongo.Collection('tacks');
 const Filters = new Mongo.Collection('activeFilters');
 
 Meteor.startup(function() {
+    // code to run on server at startup
     return Meteor.methods({
         removeAllFilters: function() {
             return Filters.remove({});
-        },
-        removeOneFilter: function() {
-            return Filters.remove({});
         }
     });
-    // code to run on server at startup
 });
 

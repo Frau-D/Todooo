@@ -52,7 +52,7 @@
 
 <template name="activeFilters">
     {{#each tag in filteredTags}}
-        <button class="filter-tag" data-tag-id="{{tag._id}}">{{tag.text}}   &times;</button>
+        <button class="filter-tag" data-tagid="{{tag._id}}">{{tag.text}}   &times;</button>
     {{/each}}
 </template>
 
@@ -94,7 +94,7 @@
 
 <template name="showTags">
     {{#each tag in tags}}
-        <button class="deleteTag" data-tag-id="{{tag._id}}">{{tag.text}}   &times;</button>
+        <button class="deleteTag" data-tagid="{{tag._id}}">{{tag.text}}   &times;</button>
     {{/each}}
 </template>
 

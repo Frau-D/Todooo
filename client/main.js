@@ -43,7 +43,9 @@ Template.body.events({
 // TODO: substitute this with actual user-id
             createdAt: new Date()
         });
-        //Session.set('clickedPieceId', piece_id);
+        Session.set('clickedPieceId', piece_id);
+        // Meteor.call('removeAllFilters');
+        // TODO: think hard if removing filters should be done here (#usability)!
         Session.set('showOverview', false);
     }
 });
@@ -81,9 +83,6 @@ Template.allClothes.events({
 
 // OVERVIEW -> FILTER 
 
-allCurrentFilters = new Set();
-
-
 var refresh_autocomplete = function(){
     var availableTags = [];
     Tacks.find({}).fetch().forEach(function(element, index,){
@@ -97,17 +96,17 @@ var refresh_autocomplete = function(){
 Template.activeFilters.helpers({
     filteredTags() {
         //refresh_autocomplete();
-        console.log('----->>>>>>');
+/*        console.log('----->>>>>>');
         console.log([...allCurrentFilters.values()]);
-        console.log(Filters.find());
+        console.log(Filters.find());*/
         return Filters.find();
     }
 });
 
 Template.activeFilters.events({
-    'click .filter-tag'() {
-
-        Meteor.call('removeOneFilter');
+    'click .filter-tag'(event) {
+        const filter_id_to_delete = event.target.dataset.tagid;
+        Filters.remove(filter_id_to_delete);
     }
 });
 
@@ -122,9 +121,7 @@ Template.filterByTag.events({
             Filters.insert({
                 text: filter_text
             });
-            allCurrentFilters.add(tag_from_db._id);
-            /* crazy syntax to create an array from a Set */
-            console.log([...allCurrentFilters.values()]);
+
 // TODO: temporarily remove already selected Filters from availableTags
         } else {
             console.log('No such tag!');
@@ -183,6 +180,7 @@ Template.piece.events({
     // remove piece-object from mongodb
     'click .delete'() {
         Pieces.remove(this._id);
+        Session.set('showOverview', true);
 // TODO: remove associated images
     },
     'change .fileInput'(event, template){
@@ -191,11 +189,11 @@ Template.piece.events({
     },
     'submit .new-tack'(event) {
         event.preventDefault();
-
+// TODO: autocompleting tags
         const tag_text = event.target.tacks.value.toLowerCase();
         const piece_id = this._id;
         var tag_id;
-        console.log(piece_id);
+        //console.log(piece_id);
 
         var tag_from_db = Tacks.findOne({text: tag_text});
         if (tag_from_db !== undefined) {
@@ -261,7 +259,7 @@ Template.showTags.helpers({
 Template.showTags.events({
     'click .deleteTag'(event) {
         const piece_id = this._id;
-        const tag_id_to_delete = event.target.dataset.tagId;
+        const tag_id_to_delete = event.target.dataset.tagid;
         var tagIndex = this.tag_ids.indexOf(tag_id_to_delete);
         this.tag_ids.splice(tagIndex, 1);
         Pieces.update(piece_id, {$set: {tag_ids: this.tag_ids}});
