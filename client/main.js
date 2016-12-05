@@ -10,6 +10,7 @@ import './main.html';
 
 Meteor.startup(() => {
     // code to run on server at startup
+// TODO: remove all unused pieces (e.g. check existance of images)
     Meteor.call('removeAllFilters');
     Session.set('showOverview', true);
 });
@@ -29,12 +30,14 @@ Template.body.helpers({
 
 });
 
+
 Template.body.events({
     //create new piece
     'submit .new-piece'(event) {
         // Prevent default browser form submit
         event.preventDefault();
-
+// TODO: add current filters as tags
+// TODO: add placeholder pic
         // Insert a piece into the collection
         var piece_id = Pieces.insert({
             image_ids: [],
@@ -56,17 +59,41 @@ Template.body.events({
 
 Template.allClothes.helpers({
     pieces() {
-        return Pieces.find(
-            {},
-            { sort: { createdAt: -1 } }
+        var set_filters = false;
+        var filtered_piece_ids = new Set();
+        Filters.find({}).fetch().forEach(
+            function(element, index,){
+                var tag_from_db = Tacks.findOne({_id: element.tag_id});
+                var tmpSet = new Set(tag_from_db.piece_ids);
+                if(filtered_piece_ids.size == 0){
+                    filtered_piece_ids = tmpSet;
+                }else{
+                    filtered_piece_ids = new Set([...filtered_piece_ids].filter(x => tmpSet.has(x)));
+                }
+                set_filters = true;
+                console.log(filtered_piece_ids);
+            }
         );
+        if(set_filters){
+            return Pieces.find(
+                {"_id": {"$in": [...filtered_piece_ids]}},
+                { sort: { createdAt: -1 } }
+            );
+
+        } else  {
+            // no filter set: return all pieces
+            return Pieces.find(
+                {},
+                { sort: { createdAt: -1 } }
+            );
+        }
     },
     piece_id() {
         return this._id;
     },
     first_image() {
         return Images.find(
-            {"_id": {"$in": [this.image_ids[0]]}},
+            {"_id": {"$in": [this.image_ids[0]]}} // [0] gets the first element only
         );
     }
 });
@@ -119,7 +146,8 @@ Template.filterByTag.events({
         var tag_from_db = Tacks.findOne({text: filter_text});
         if (tag_from_db !== undefined) {
             Filters.insert({
-                text: filter_text
+                text: filter_text,
+                tag_id: tag_from_db._id
             });
 
 // TODO: temporarily remove already selected Filters from availableTags
@@ -179,6 +207,11 @@ var handleUpload = function (event, template) {
 Template.piece.events({
     // remove piece-object from mongodb
     'click .delete'() {
+// TODO: delete piece_id from this specific tack: ...
+        /*var pieceIdToDelete = this._id;
+        Tacks.find({}).fetch().forEach(function(element, index,){
+            arrayOfPieceIds.push(element._id);
+        });*/
         Pieces.remove(this._id);
         Session.set('showOverview', true);
 // TODO: remove associated images
@@ -189,6 +222,7 @@ Template.piece.events({
     },
     'submit .new-tack'(event) {
         event.preventDefault();
+// TODO: actually prevent default
 // TODO: autocompleting tags
         const tag_text = event.target.tacks.value.toLowerCase();
         const piece_id = this._id;
@@ -258,6 +292,7 @@ Template.showTags.helpers({
 
 Template.showTags.events({
     'click .deleteTag'(event) {
+    // TODO: delete piece_id from this specific tack
         const piece_id = this._id;
         const tag_id_to_delete = event.target.dataset.tagid;
         var tagIndex = this.tag_ids.indexOf(tag_id_to_delete);
@@ -265,7 +300,7 @@ Template.showTags.events({
         Pieces.update(piece_id, {$set: {tag_ids: this.tag_ids}});
 
         var tag_from_db = Tacks.findOne({_id: tag_id_to_delete});
-        // remove pice_id from tag_from_db.piece_ids
+        // remove piece_id from tag_from_db.piece_ids
         tag_from_db.piece_ids.splice(tag_from_db.piece_ids.indexOf(piece_id),1);
         if(tag_from_db.piece_ids.length > 0){
             Tacks.update(tag_id_to_delete, {$set: {piece_ids: tag_from_db.piece_ids}});
