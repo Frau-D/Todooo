@@ -153,7 +153,7 @@ Template.filterByTag.events({
 // TODO: temporarily remove already selected Filters from availableTags
         } else {
             console.log('No such tag!');
-// TODO: add ui error message
+// TODO: add ui error message "No such tag... Try again."
         }
         event.target.filtered_tack.value = '';
     }
@@ -204,25 +204,35 @@ var handleUpload = function (event, template) {
 };
 
 
+
+
 Template.piece.events({
     // remove piece-object from mongodb
-    'click .delete'() {
-// TODO: delete piece_id from this specific tack: ...
-        /*var pieceIdToDelete = this._id;
-        Tacks.find({}).fetch().forEach(function(element, index,){
-            arrayOfPieceIds.push(element._id);
-        });*/
+    'click .delete'(event) {
+        console.log('----> Template.piece: click .delete');
+
+        const piece_id = event.target.dataset.pieceid;
+        const piece_from_db = Pieces.findOne({_id: piece_id});
+        const tag_ids_to_delete = piece_from_db.tag_ids;
+        tag_ids_to_delete.forEach(function(tag_id) {
+            deleteTackFromPiece(piece_id, tag_id);
+        });
+
+        const image_ids_to_delete = piece_from_db.image_ids;
+        image_ids_to_delete.forEach(function(image_id) {
+            deleteImageFromPiece(piece_id, image_id);
+        });
+
         Pieces.remove(this._id);
         Session.set('showOverview', true);
-// TODO: remove associated images
     },
     'change .fileInput'(event, template){
         handleUpload(event, template);
-//TODO: "No File Selected" zurücksetzen/entfernen
+//TODO: reset/remove "No File Selected"
     },
     'submit .new-tack'(event) {
         event.preventDefault();
-// TODO: actually prevent default
+// TODO: actually prevent default: check if string is empty
 // TODO: autocompleting tags
         const tag_text = event.target.tacks.value.toLowerCase();
         const piece_id = this._id;
@@ -255,6 +265,13 @@ Template.piece.events({
 });
 
 
+Template.piece.helpers({
+    piece_id() {
+        return Session.get('clickedPieceId');
+    }
+});
+
+
 Template.showImages.helpers({
     images() {
         return Images.find(
@@ -266,15 +283,22 @@ Template.showImages.helpers({
 
 // PIECE -> SHOW IMAGES
 
+var deleteImageFromPiece = function(piece_id, image_id_to_delete){
+    console.log('----> deleteImageFromPiece');
+    const piece_from_db = Pieces.findOne({_id: piece_id});
+    const imageIndex = piece_from_db.image_ids.indexOf(image_id_to_delete);
+    piece_from_db.image_ids.splice(imageIndex, 1); // deletes ONE element on position of imageIndex
+    Pieces.update(piece_id, {
+        $set: {image_ids: piece_from_db.image_ids}
+    });
+    Meteor.call('removeImage', image_id_to_delete);
+};
+
 Template.showImages.events({
     'click .deleteImage'(event) {
-        //Images.remove(this._id);
-        var deletedImage = event.target.dataset.imageid;
-        var imageIndex = this.image_ids.indexOf(deletedImage);
-        this.image_ids.splice(imageIndex, 1); // deletes ONE element on position of imageIndex
-        Pieces.update(this._id, {
-            $set: {image_ids: this.image_ids}
-        });
+        const piece_id = this._id;
+        const image_id_to_delete = event.target.dataset.imageid;
+        deleteImageFromPiece(piece_id, image_id_to_delete);
     }
 });
 
@@ -283,31 +307,40 @@ Template.showImages.events({
 
 Template.showTags.helpers({
     tags() {
-        return Tacks.find(
-            {"_id": {"$in": this.tag_ids}}
-        );
+        return Tacks.find({"_id": {"$in": this.tag_ids}});
     }
 });
 
 
+
+var deleteTackFromPiece = function (piece_id, tag_id_to_delete) {
+    console.log('----> deleteTackFromPiece');
+    var tag_from_db = Tacks.findOne({_id: tag_id_to_delete});
+    var piece_from_db = Pieces.findOne({_id: piece_id});
+
+    // remove piece_id from tag_from_db.piece_ids
+    tag_from_db.piece_ids.splice(tag_from_db.piece_ids.indexOf(piece_id),1);
+    if(tag_from_db.piece_ids.length > 0){
+        console.log('-- delete piece_id from tack');
+        Tacks.update(tag_id_to_delete, {$set: {piece_ids: tag_from_db.piece_ids}});
+    }else{
+        // if last piece_id is removed: delete tag
+        console.log('-- delete tack from db');
+        Tacks.remove(tag_id_to_delete);
+    }
+    // remove tack_id from piece
+    const tagIndex = piece_from_db.tag_ids.indexOf(tag_id_to_delete); //Index holen
+    piece_from_db.tag_ids.splice(tagIndex, 1); //ein Element an Stelle des Index entfernen
+    Pieces.update(piece_id, {$set: {tag_ids: piece_from_db.tag_ids}}); //tag_ids aktualisieren
+};
+
 Template.showTags.events({
     'click .deleteTag'(event) {
-    // TODO: delete piece_id from this specific tack
+        console.log('----> Template.showTags: click .deleteTag');
         const piece_id = this._id;
         const tag_id_to_delete = event.target.dataset.tagid;
-        var tagIndex = this.tag_ids.indexOf(tag_id_to_delete);
-        this.tag_ids.splice(tagIndex, 1);
-        Pieces.update(piece_id, {$set: {tag_ids: this.tag_ids}});
-
-        var tag_from_db = Tacks.findOne({_id: tag_id_to_delete});
-        // remove piece_id from tag_from_db.piece_ids
-        tag_from_db.piece_ids.splice(tag_from_db.piece_ids.indexOf(piece_id),1);
-        if(tag_from_db.piece_ids.length > 0){
-            Tacks.update(tag_id_to_delete, {$set: {piece_ids: tag_from_db.piece_ids}});
-        }else{
-            // if last piece_id is removed: delete tag
-            Tacks.remove(tag_id_to_delete);
-        }
+        console.log('-- piece_id:', piece_id, 'tag_id_to_delete:', tag_id_to_delete);
+        deleteTackFromPiece(piece_id, tag_id_to_delete);
     }
 });
 

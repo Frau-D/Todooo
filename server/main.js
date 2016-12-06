@@ -9,7 +9,12 @@ Meteor.startup(function() {
     return Meteor.methods({
         removeAllFilters: function() {
             return Filters.remove({});
+        },
+        removeImage: function(image_id) {
+            console.log('----> remove Image');
+            return Images.remove(image_id);
         }
+
     });
 });
 
