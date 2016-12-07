@@ -44,7 +44,7 @@
     <div id="filter-form">
         {{>activeFilters}}
     </div>
-    <form class="ui-widget">
+    <form class="filter_form">
         <input id="tags_autocomplete" type="text" name="filtered_tack" placeholder="Search by tags...">
         <input type="submit" class="new-filter" value="add"/>
     </form>
@@ -71,7 +71,7 @@
             <input class="fileInput" type="file"/>
         </div>
         <form class="new-tack">
-            <input type="text" name="tacks" placeholder="Type to add tags..."/>
+            <input id="tags_autocomplete" type="text" name="tacks" placeholder="Type to add tags..."/>
             <input type="submit" name="submit" value="add"/>  <!--add tack-button-->
         </form>
         <div>
@@ -101,7 +101,7 @@
 
 <template name="overviewButton">
     <div>
-        <button id="overview">overview</button>
+        <button id="overview" >overview</button>
     </div>
 </template>
 

@@ -13,24 +13,23 @@ import './main.html';
 
 Meteor.startup(() => {
     // code to run on server at startup
-// TODO: let the clean-up code run as soon as the collections are loaded
-// TODO: insert future deletePiece()
-    Pieces.find({}).fetch().forEach(
-        function(piece_object, index,) {
-            var piece_id_to_delete = piece_object._id;
-            console.log('---> delete function: ' + piece_id_to_delete);
-            console.log(piece_object.image_ids.length);
-            /*if (piece_object.image_ids.length == 0){
-             console.log('----> deleted piece from db: ' + piece_id_to_delete);
-             Pieces.remove(piece_id_to_delete);
-             }*/
-        }
-    );
+// TODO: let this clean-up code run as soon as the collections got loaded:
+    /*Pieces.find({_id}).fetch()._id.forEach(
+        deleteEmptyPiece(piece_object)
+    );*/
     Meteor.call('removeAllFilters');
     Session.set('showOverview', true);
 });
 
 
+// deletes the piece if it has no associated images (no deleteTackFromPiece(), though)
+var deleteEmptyPiece = function(piece_object, index,) {
+    var piece_id_to_delete = piece_object._id;
+    if (piece_object.image_ids.length == 0){
+        console.log('----> deleteEmptyPiece: ' + piece_id_to_delete);
+        Pieces.remove(piece_id_to_delete);
+    }
+};
 
 // BODY 
 
@@ -62,8 +61,8 @@ Template.body.events({
             createdAt: new Date()
         });
         Session.set('clickedPieceId', piece_id);
+// TODO: think hard if removing filters should be done here (#usability):
         // Meteor.call('removeAllFilters');
-        // TODO: think hard if removing filters should be done here (#usability)!
         Session.set('showOverview', false);
     }
 });
@@ -153,23 +152,27 @@ Template.activeFilters.events({
 });
 
 Template.filterByTag.events({
-    'submit .ui-widget'(event) {
+    'submit .filter_form'(event) {
         // Prevent default browser form submit
         event.preventDefault();
-
         var filter_text = event.target.filtered_tack.value.toLowerCase();
         var tag_from_db = Tacks.findOne({text: filter_text});
-        if (tag_from_db !== undefined) {
-            Filters.insert({
-                text: filter_text,
-                tag_id: tag_from_db._id
-            });
-
-// TODO: temporarily remove already selected Filters from availableTags
-        } else {
-            toastr.error('Nothing tagged with "' + filter_text + '" yet... Try again.', "Oh no!");
+        var tag_already_in_Filters = Filters.findOne({text: filter_text});
+        if (filter_text == ''){
+            toastr.info('..empty inside...', 'I feel so...');
+        }else if(tag_already_in_Filters) {
+            toastr.info('Even more "' + filter_text + '"?', 'Really?!');
+        }else{
+            if (tag_from_db !== undefined) {
+                Filters.insert({
+                    text: filter_text,
+                    tag_id: tag_from_db._id
+                });
+            } else {
+                toastr.error('Nothing tagged with "' + filter_text + '" yet... Try again.', "Oh no!");
+            }
+            event.target.filtered_tack.value = '';
         }
-        event.target.filtered_tack.value = '';
     }
 });
 
@@ -201,7 +204,7 @@ var handleUpload = function (event, template) {
                 if (error) {
                     alert('Error during upload: ' + error.reason);
                 } else {
-                    toastr.success('File "' + fileObj.name + '" successfully uploaded: '+fileObj._id, "Awesome!");
+                    //toastr.success('File "' + fileObj.name + '" successfully uploaded: '+fileObj._id, "Awesome!");
                     template.data.image_ids.push(fileObj._id);
 
                     Pieces.update(template.data._id, {
@@ -222,7 +225,7 @@ var handleUpload = function (event, template) {
 
 Template.piece.events({
     // remove piece-object from mongodb
-    // TODO: extract delete function to make use of it deleting empty pieces at startup
+    // TODO: extract deletePiece function to make use of it deleting empty pieces at startup
     'click .delete'(event) {
         console.log('----> Template.piece: click .delete');
 
@@ -237,7 +240,7 @@ Template.piece.events({
         image_ids_to_delete.forEach(function(image_id) {
             deleteImageFromPiece(piece_id, image_id);
         });
-        toastr.success('This piece is gone now. Seriously.', "-1!");
+        toastr.success('This piece is gone now. Seriously.', '-1!');
 
         Pieces.remove(this._id);
         Session.set('showOverview', true);
@@ -248,35 +251,38 @@ Template.piece.events({
     },
     'submit .new-tack'(event) {
         event.preventDefault();
-// TODO: actually prevent default: check if string is empty
 // TODO: autocompleting tags
-        const tag_text = event.target.tacks.value.toLowerCase();
-        const piece_id = this._id;
-        var tag_id;
-        //console.log(piece_id);
+        if (event.target.tacks.value == ''){
+            toastr.info('..empty!', "It's just not meant to be...");
+        }else{
+            const tag_text = event.target.tacks.value.toLowerCase();
+            const piece_id = this._id;
+            var tag_id;
+            //console.log(piece_id);
 
-        var tag_from_db = Tacks.findOne({text: tag_text});
-        if (tag_from_db !== undefined) {
-            // update list of piece_ids for this tag
-            tag_id = tag_from_db._id;
-            if (tag_from_db.piece_ids.indexOf(piece_id) == -1){ //  only add piece_id when not already in piece_ids
-                tag_from_db.piece_ids.push(piece_id);
-                Tacks.update(tag_id, {$set: {piece_ids: tag_from_db.piece_ids}});
+            var tag_from_db = Tacks.findOne({text: tag_text});
+            if (tag_from_db !== undefined) {
+                // update list of piece_ids for this tag
+                tag_id = tag_from_db._id;
+                if (tag_from_db.piece_ids.indexOf(piece_id) == -1){ //  only add piece_id when not already in piece_ids
+                    tag_from_db.piece_ids.push(piece_id);
+                    Tacks.update(tag_id, {$set: {piece_ids: tag_from_db.piece_ids}});
+                }
+            } else {
+                // insert new tag into Tacks-collection
+                tag_id = Tacks.insert({
+                    text: tag_text,
+                    piece_ids: [piece_id]
+                });
             }
-        } else {
-            // insert new tag into Tacks-collection
-            tag_id = Tacks.insert({
-                text: tag_text,
-                piece_ids: [piece_id]
-            });
+            // check if it's not already in tag_ids of the piece
+            if (this.tag_ids.indexOf(tag_id) == -1) {
+                this.tag_ids.push(tag_id);
+                Pieces.update(piece_id, {$set: {tag_ids: this.tag_ids}});
+            }
+            // clear input field
+            event.target.tacks.value = '';
         }
-        // check if it's not already in tag_ids of the piece
-        if (this.tag_ids.indexOf(tag_id) == -1) {
-            this.tag_ids.push(tag_id);
-            Pieces.update(piece_id, {$set: {tag_ids: this.tag_ids}});
-        }
-        // clear input field
-        event.target.tacks.value = '';
     }
 });
 
@@ -363,9 +369,17 @@ Template.showTags.events({
 
 // PIECE -> OVERVIEW BUTTON
 
+
+
 Template.overviewButton.events({
     'click #overview'(event) {
         event.preventDefault();
+        var piece_id = Session.get('clickedPieceId');
+        var piece_object = Pieces.findOne({_id: piece_id});
+        deleteEmptyPiece(piece_object);
         Session.set('showOverview', true);
     }
 });
+
+
+
