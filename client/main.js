@@ -8,9 +8,24 @@ export const Filters = new Mongo.Collection('activeFilters');
 
 import './main.html';
 
+// toastr package: https://atmospherejs.com/chrismbeckett/toastr
+// toastr demo: http://codeseven.github.io/toastr/demo.html
+
 Meteor.startup(() => {
     // code to run on server at startup
-// TODO: remove all unused pieces (e.g. check existance of images)
+// TODO: let the clean-up code run as soon as the collections are loaded
+// TODO: insert future deletePiece()
+    Pieces.find({}).fetch().forEach(
+        function(piece_object, index,) {
+            var piece_id_to_delete = piece_object._id;
+            console.log('---> delete function: ' + piece_id_to_delete);
+            console.log(piece_object.image_ids.length);
+            /*if (piece_object.image_ids.length == 0){
+             console.log('----> deleted piece from db: ' + piece_id_to_delete);
+             Pieces.remove(piece_id_to_delete);
+             }*/
+        }
+    );
     Meteor.call('removeAllFilters');
     Session.set('showOverview', true);
 });
@@ -152,8 +167,7 @@ Template.filterByTag.events({
 
 // TODO: temporarily remove already selected Filters from availableTags
         } else {
-            console.log('No such tag!');
-// TODO: add ui error message "No such tag... Try again."
+            toastr.error('Nothing tagged with "' + filter_text + '" yet... Try again.', "Oh no!");
         }
         event.target.filtered_tack.value = '';
     }
@@ -187,7 +201,7 @@ var handleUpload = function (event, template) {
                 if (error) {
                     alert('Error during upload: ' + error.reason);
                 } else {
-                    //alert('File "' + fileObj.name + '" successfully uploaded: '+fileObj._id);
+                    toastr.success('File "' + fileObj.name + '" successfully uploaded: '+fileObj._id, "Awesome!");
                     template.data.image_ids.push(fileObj._id);
 
                     Pieces.update(template.data._id, {
@@ -208,6 +222,7 @@ var handleUpload = function (event, template) {
 
 Template.piece.events({
     // remove piece-object from mongodb
+    // TODO: extract delete function to make use of it deleting empty pieces at startup
     'click .delete'(event) {
         console.log('----> Template.piece: click .delete');
 
@@ -222,6 +237,7 @@ Template.piece.events({
         image_ids_to_delete.forEach(function(image_id) {
             deleteImageFromPiece(piece_id, image_id);
         });
+        toastr.success('This piece is gone now. Seriously.', "-1!");
 
         Pieces.remove(this._id);
         Session.set('showOverview', true);
