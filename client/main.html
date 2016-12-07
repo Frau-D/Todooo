@@ -42,6 +42,9 @@
 
 <template name="filterByTag">
     <div id="filter-form">
+        {{#if filterSet}}
+            <button class="reset"> clear all </button>
+        {{/if}}
         {{>activeFilters}}
     </div>
     <form class="filter_form">

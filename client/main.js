@@ -19,6 +19,7 @@ Meteor.startup(() => {
     );*/
     Meteor.call('removeAllFilters');
     Session.set('showOverview', true);
+    Session.set('filterSet', false);
 });
 
 
@@ -140,6 +141,11 @@ Template.activeFilters.helpers({
 /*        console.log('----->>>>>>');
         console.log([...allCurrentFilters.values()]);
         console.log(Filters.find());*/
+        if(Filters.find().count() < 2){
+            Session.set('filterSet', false);
+        }else{
+            Session.set('filterSet', true);
+        }
         return Filters.find();
     }
 });
@@ -171,8 +177,13 @@ Template.filterByTag.events({
             } else {
                 toastr.error('Nothing tagged with "' + filter_text + '" yet... Try again.', "Oh no!");
             }
-            event.target.filtered_tack.value = '';
         }
+        event.target.filtered_tack.value = '';
+    },
+    'click .reset'(event){
+        event.preventDefault();
+        Meteor.call('removeAllFilters');
+        Session.set('filterSet', false);
     }
 });
 
@@ -182,6 +193,12 @@ Template.filterByTag.rendered = function(){
     refresh_autocomplete();
 };
 
+
+Template.filterByTag.helpers({
+    filterSet(){
+        return Session.get('filterSet');
+    }
+});
 
 
 // PIECE
@@ -225,7 +242,7 @@ var handleUpload = function (event, template) {
 
 Template.piece.events({
     // remove piece-object from mongodb
-    // TODO: extract deletePiece function to make use of it deleting empty pieces at startup
+    // TODO: extract deletePiece function to make use of it deleting empty pieces at startup (?)
     'click .delete'(event) {
         console.log('----> Template.piece: click .delete');
 
