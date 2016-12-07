@@ -51,19 +51,24 @@ Template.body.events({
     'submit .new-piece'(event) {
         // Prevent default browser form submit
         event.preventDefault();
-// TODO: add current filters as tags
+
+        var tag_ids = [];
+        Filters.find({},{fields:{'tag_id':1}}).fetch().forEach(
+            function (element, index) {
+                tag_ids.push(element.tag_id)
+            });
+
 // TODO: add placeholder pic
         // Insert a piece into the collection
         var piece_id = Pieces.insert({
             image_ids: [],
-            tag_ids: [],
+            tag_ids: tag_ids,
             user_id: 'Conny',
 // TODO: substitute this with actual user-id
             createdAt: new Date()
         });
         Session.set('clickedPieceId', piece_id);
-// TODO: think hard if removing filters should be done here (#usability):
-        // Meteor.call('removeAllFilters');
+        Meteor.call('removeAllFilters');
         Session.set('showOverview', false);
     }
 });
@@ -184,6 +189,9 @@ Template.filterByTag.events({
         event.preventDefault();
         Meteor.call('removeAllFilters');
         Session.set('filterSet', false);
+    },
+    'focus #tags_autocomplete'(event){
+        refresh_autocomplete();
     }
 });
 
@@ -268,7 +276,6 @@ Template.piece.events({
     },
     'submit .new-tack'(event) {
         event.preventDefault();
-// TODO: autocompleting tags
         if (event.target.tacks.value == ''){
             toastr.info('..empty!', "It's just not meant to be...");
         }else{
@@ -300,6 +307,9 @@ Template.piece.events({
             // clear input field
             event.target.tacks.value = '';
         }
+    },
+    'focus #tags_autocomplete'(event){
+        refresh_autocomplete();
     }
 });
 
