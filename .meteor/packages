@@ -25,3 +25,5 @@ ostrio:templatehelpers
 session@1.1.7
 mizzao:jquery-ui
 chrismbeckett:toastr
+
+babel-runtime
