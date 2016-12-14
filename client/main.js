@@ -20,6 +20,7 @@ Meteor.startup(() => {
     Meteor.call('removeAllFilters');
     Session.set('showOverview', true);
     Session.set('filterSet', false);
+    Session.set('pwNotSet', true);
 });
 
 
@@ -41,6 +42,9 @@ Template.body.helpers({
     pieces() {
         var piece_id = Session.get('clickedPieceId');
         return Pieces.find({"_id": {"$in": [piece_id]}});
+    },
+    pwNotSet() {
+        return Session.get('pwNotSet');
     }
 
 });
@@ -73,7 +77,17 @@ Template.body.events({
     }
 });
 
+// PASSWORD
 
+Template.password_form.events({
+    'submit .password'(event) {
+        if(event.target.pass.value == 'banana'){
+            Session.set('pwNotSet', false);
+        }else{
+            toastr.error("That's not the one.", "Well, yeah...");
+        }
+    }
+});
 
 // OVERVIEW 
 
@@ -120,7 +134,7 @@ Template.allClothes.helpers({
 
 Template.allClothes.events({
     'click .overviewImage'(event) {
-        piece_id = event.target.dataset.pieceid;
+        var piece_id = event.target.dataset.pieceid;
         Session.set('clickedPieceId', piece_id);
         Session.set('showOverview', false);
     }
@@ -227,7 +241,7 @@ var handleUpload = function (event, template) {
 
             uploadInstance.on('end', function (error, fileObj) {
                 if (error) {
-                    alert('Error during upload: ' + error.reason);
+                    toastr.error('Well, try uploading PNG or JPEG with a file size equal or less than 10 MB...', 'No. Just no.');
                 } else {
                     //toastr.success('File "' + fileObj.name + '" successfully uploaded: '+fileObj._id, "Awesome!");
                     template.data.image_ids.push(fileObj._id);

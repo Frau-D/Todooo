@@ -3,24 +3,36 @@
 </head>
 
 <body>
-{{#if showOverview}}
-    {{> allClothes}}
-    <form class="new-piece">
-        <input type="submit" name="submit" value="new piece"/>
-    </form>
+{{#if pwNotSet}}
+    {{> password_form}}
 {{else}}
-    {{> overviewButton }}
-    <div class="piece">
-        <ul>
-            {{#each pieces}}
-                {{> piece}}
-            {{/each}}
-        </ul>
-    </div>
+    {{#if showOverview}}
+        {{> allClothes}}
+        <form class="new-piece">
+            <input type="submit" name="submit" value="new piece"/>
+        </form>
+    {{else}}
+        {{> overviewButton }}
+        <div class="piece">
+            <ul>
+                {{#each pieces}}
+                    {{> piece}}
+                {{/each}}
+            </ul>
+        </div>
+    {{/if}}
 {{/if}}
 
 </body>
 
+<!---------------in PASSWORD-WALL --------------->
+
+<template name="password_form">
+    <form class="password">
+        <input id="pass" type="text" placeholder="password?"/>
+        <input type="submit" name="submit" value="submit"/>
+    </form>
+</template>
 
 <!----------------- in OVERVIEW ----------------->
 
