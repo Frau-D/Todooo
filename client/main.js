@@ -81,10 +81,12 @@ Template.body.events({
 
 Template.password_form.events({
     'submit .password'(event) {
+        event.preventDefault();
         if(event.target.pass.value == 'banana'){
             Session.set('pwNotSet', false);
         }else{
             toastr.error("That's not the one.", "Well, yeah...");
+            event.target.pass.value = '';
         }
     }
 });
