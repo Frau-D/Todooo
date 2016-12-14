@@ -3,17 +3,34 @@
     background-color: chartreuse;
 }
 
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 .flex-row {
+    margin-top: 50px;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     /*justify-content: space-around;*/
 }
 
-.overviewImage {
-    width: 200px;
-    height: 200px;
+.pieceInOverview {
 }
 
+.overviewImage {
+    width: 206px;
+    height: 206px;
+}
+
+.new-piece {
+    position: fixed;
+    bottom: 5%;
+    right: 5%;
+}
 
 .clear {
     clear:left;
@@ -55,4 +72,34 @@
     height: 20px;
     width: 20px;
     color: red;
+    background-color: transparent;
+    border-color: transparent;
+}
+
+#filter-form {
+    position: fixed;
+    top:0;
+    width: 100%;
+    background-color: darkslategrey;
+    min-height: 50px;
+}
+
+
+.new-piece > input[type="submit"]{
+    width: 75px;
+    height: 75px;
+    border-radius: 10000px;
+    font-size: 41px;
+    text-align: center;
+    font-weight: bold;
+
+    background: radial-gradient(hotpink, mediumvioletred); /* Standard syntax */
+
+    color: black;
+
+}
+
+.new-piece > input[type="submit"]:active{
+    background: radial-gradient(mediumvioletred, hotpink);
+
 }

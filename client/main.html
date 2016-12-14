@@ -1,5 +1,6 @@
 <head>
     <title>clutterive</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
@@ -9,7 +10,7 @@
     {{#if showOverview}}
         {{> allClothes}}
         <form class="new-piece">
-            <input type="submit" name="submit" value="new piece"/>
+            <input type="submit" name="submit" value="+" />
         </form>
     {{else}}
         {{> overviewButton }}
@@ -42,11 +43,13 @@
 
     <div class="flex-row">
         {{#each pieces}}
-            {{#each image in first_image.each}}
-                <div class="overviewImage"
-                     style="background:url({{image.link 'thumbnail140'}}) 50% 50% no-repeat; background-size:cover;"
-                     data-pieceid="{{ piece_id }}" ></div>
-            {{/each}}
+            <div class="pieceInOverview">
+                {{#each image in first_image.each}}
+                    <div class="overviewImage"
+                         style="background:url({{image.link 'thumbnail140'}}) 50% 50% no-repeat; background-size:cover;"
+                         data-pieceid="{{ piece_id }}" ></div>
+                {{/each}}
+            </div>
         {{/each}}
     </div>
 </template>
@@ -54,15 +57,17 @@
 
 <template name="filterByTag">
     <div id="filter-form">
-        {{#if filterSet}}
-            <button class="reset"> clear all </button>
-        {{/if}}
-        {{>activeFilters}}
+        <div id="activeFilters">
+            {{#if filterSet}}
+                <button class="button primary reset"> clear all </button>
+            {{/if}}
+            {{>activeFilters}}
+        </div>
+        <form class="filter_form">
+            <input id="tags_autocomplete" type="text" name="filtered_tack" placeholder="Search by tags...">
+            <input type="submit" class="new-filter" value="add"/>
+        </form>
     </div>
-    <form class="filter_form">
-        <input id="tags_autocomplete" type="text" name="filtered_tack" placeholder="Search by tags...">
-        <input type="submit" class="new-filter" value="add"/>
-    </form>
 </template>
 
 <template name="activeFilters">
