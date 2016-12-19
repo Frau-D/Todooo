@@ -171,6 +171,7 @@ Template.activeFilters.helpers({
     }
 });
 
+
 Template.activeFilters.events({
     'click .filter-tag'(event) {
         const filter_id_to_delete = event.target.dataset.tagid;
