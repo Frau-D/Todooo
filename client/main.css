@@ -9,22 +9,70 @@ html, body {
     width: 100%;
     margin: 0;
     padding: 0;
+    background-color: #333333;
 }
 
 .flex-row {
-    margin-top: 50px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     /*justify-content: space-around;*/
 }
 
+.flex-overview {
+    margin-top: 50px;
+    z-index: 1;
+    padding: .5%;
+}
+
+.flex-detail {
+    padding: .5%;
+}
+
 .pieceInOverview {
+    width: 49%;
+    position: relative;
+    margin: .5%;
+}
+
+.pieceInOverview:before { /*used to determine image height*/
+    content: "";
+    display: block;
+    padding-top: 100%;
+    pointer-events: none;
 }
 
 .overviewImage {
-    width: 206px;
-    height: 206px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.detailImageContainer {
+    width: 24%;
+    position: relative;
+    margin: .5%;
+}
+
+.detailImageContainer:first-child {
+    width: 100%;
+}
+
+.detailImageContainer:before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+    pointer-events: none;
+}
+
+.detailImageContainer .detailImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 .new-piece {
@@ -65,8 +113,6 @@ html, body {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-    height: 200px;
-    width: 200px;
 }
 
 .detailImage button {
@@ -81,10 +127,21 @@ html, body {
     position: fixed;
     top:0;
     width: 100%;
-    background-color: darkslategrey;
-    min-height: 50px;
+    background-color: #222222;
+    z-index:2;
 }
 
+.filter_form {
+    margin: 0;
+}
+
+.filter_form, #activeFilters {
+    box-shadow: 3px 0 3px #fff;
+}
+
+#activeFilters {
+    background-color: #333333;
+}
 
 .new-piece > input[type="submit"]{
     width: 75px;

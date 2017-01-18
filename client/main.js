@@ -20,7 +20,9 @@ Meteor.startup(() => {
     Meteor.call('removeAllFilters');
     Session.set('showOverview', true);
     Session.set('filterSet', false);
-    Session.set('pwNotSet', true);
+    Session.set('pwNotSet', false);
+    imageWidth = window.innerWidth/2;
+    console.log("/////////////////////////"+imageWidth);
 });
 
 
@@ -176,6 +178,7 @@ Template.activeFilters.events({
     'click .filter-tag'(event) {
         const filter_id_to_delete = event.target.dataset.tagid;
         Filters.remove(filter_id_to_delete);
+        $('.flex-overview').css('margin-top', $('#filter-form').height());
     }
 });
 
@@ -200,6 +203,7 @@ Template.filterByTag.events({
                 toastr.error('Nothing tagged with "' + filter_text + '" yet... Try again.', "Oh no!");
             }
         }
+        $('.flex-overview').css('margin-top', $('#filter-form').height());
         event.target.filtered_tack.value = '';
     },
     'click .reset'(event){
