@@ -20,7 +20,7 @@ Meteor.startup(() => {
     Meteor.call('removeAllFilters');
     Session.set('showOverview', true);
     Session.set('filterSet', false);
-    Session.set('pwNotSet', false);
+    Session.set('pwNotSet', true);
     imageWidth = window.innerWidth/2;
     console.log("/////////////////////////"+imageWidth);
 });
