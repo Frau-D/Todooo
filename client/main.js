@@ -25,6 +25,15 @@ Meteor.startup(() => {
     console.log("/////////////////////////"+imageWidth);
 });
 
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').then(function(registration) {
+        // Registration was successful
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }).catch(function(err) {
+        // registration failed :(
+        console.log('ServiceWorker registration failed: ', err);
+    });
+}
 
 // deletes the piece if it has no associated images (no deleteTackFromPiece(), though)
 var deleteEmptyPiece = function(piece_object, index,) {
@@ -169,6 +178,7 @@ Template.activeFilters.helpers({
         }else{
             Session.set('filterSet', true);
         }
+        $('.flex-overview').css('margin-top', $('#filter-form').height());
         return Filters.find();
     }
 });
@@ -178,7 +188,7 @@ Template.activeFilters.events({
     'click .filter-tag'(event) {
         const filter_id_to_delete = event.target.dataset.tagid;
         Filters.remove(filter_id_to_delete);
-        $('.flex-overview').css('margin-top', $('#filter-form').height());
+        $(window).scrollTop(0);
     }
 });
 
@@ -203,13 +213,14 @@ Template.filterByTag.events({
                 toastr.error('Nothing tagged with "' + filter_text + '" yet... Try again.', "Oh no!");
             }
         }
-        $('.flex-overview').css('margin-top', $('#filter-form').height());
         event.target.filtered_tack.value = '';
+        $(window).scrollTop(0);
     },
     'click .reset'(event){
         event.preventDefault();
         Meteor.call('removeAllFilters');
         Session.set('filterSet', false);
+        $(window).scrollTop(0);
     },
     'focus #tags_autocomplete'(event){
         refresh_autocomplete();
@@ -344,9 +355,18 @@ Template.piece.helpers({
 
 Template.showImages.helpers({
     images() {
-        return Images.find(
+        var result = Images.find(
             {"_id": {"$in": this.image_ids}}
         );
+        if (result.count() == 0) {
+            result = [{
+                isImage: false /* hack to show placeholder image */
+            }];
+            return result;
+        } else {
+            return result.each();
+        }
+
     }
 });
 

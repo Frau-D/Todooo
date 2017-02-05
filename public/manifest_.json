@@ -1,0 +1,17 @@
+{
+  "lang": "en",
+  "dir": "ltr",
+  "name": "clutterive",
+  "description": "clutterive",
+  "short_name": "clutterive",
+  "icons": [
+    {"src": "144.png","sizes": "144x144"},
+    {"src": "128.png","sizes": "128x128"}
+   ,{"src": "64.png","sizes": "64x64"}
+  ],
+  "start_url": "/",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "theme_color": "#333333",
+  "background_color": "#333333"
+}

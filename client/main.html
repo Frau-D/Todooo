@@ -1,8 +1,9 @@
 <head>
     <title>clutterive</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
+    <link rel="manifest" href="/manifest_.json">
 
+</head>
 
 <body>
 {{#if pwNotSet}}
@@ -56,21 +57,24 @@
 <template name="filterByTag">
     <div id="filter-form">
         <form class="filter_form">
-            <input id="tags_autocomplete" type="text" name="filtered_tack" placeholder="Search by tags...">
-            <input type="submit" class="new-filter" value="add"/>
+            <div id="filter_text_field">
+                <input id="tags_autocomplete" type="text" name="filtered_tack" placeholder="Search by tags...">
+                <input type="submit" class="new-filter" value="+"/>
+            </div>
         </form>
         <div id="activeFilters">
-            {{#if filterSet}}
-                <button class="button primary reset"> clear all </button>
-            {{/if}}
             {{>activeFilters}}
+
+            {{#if filterSet}}
+                <button class="button primary reset clear-tags"> clear all </button>
+            {{/if}}
         </div>
     </div>
 </template>
 
 <template name="activeFilters">
     {{#each tag in filteredTags}}
-        <button class="filter-tag" data-tagid="{{tag._id}}">{{tag.text}}   &times;</button>
+        <button class="filter-tag" data-tagid="{{tag._id}}">{{tag.text}}<span class="delete_filter_x">&times;</span></button>
     {{/each}}
 </template>
 
@@ -85,29 +89,35 @@
             {{> showImages }}
         </div>
         <div class="clear"></div>
-        {{> showTags}}
-        <div>
+        <div class="filechooser">
             <input class="fileInput" type="file"/>
         </div>
+        {{> showTags}}
         <form class="new-tack">
             <input id="tags_autocomplete" type="text" name="tacks" placeholder="Type to add tags..."/>
-            <input type="submit" name="submit" value="add"/>  <!--add tack-button-->
+            <input type="submit" name="submit" value="add" class="button"/>  <!--add tack-button-->
         </form>
         <div>
-            <button class="delete" data-pieceid="{{ piece_id }}">delete piece (&times;)</button>
+            <button class="delete deletePiece" data-pieceid="{{ piece_id }}">delete piece</button>
         </div>
     </div>
 </template>
 
 
 <template name="showImages">
-    {{#each image in images.each}}
+    {{#each image in images}}
         <div class="detailImageContainer">
-            <div class="detailImage"
+            {{#if image.isImage}}
+                <div class="detailImage"
                  style="background:url({{image.link 'thumbnail140'}}) 50% 50% no-repeat; background-size:cover;"
                  data-pieceid="{{ piece_id }}" >
                 <button class="deleteImage" data-imageid="{{ image._id }}">&times;</button>
-            </div>
+                </div>
+            {{else}}
+                <div class="detailImage"
+                     style="background:url('/image-placeholder.png') 50% 50% no-repeat; background-size:cover;">
+                </div>
+            {{/if}}
         </div>
     {{/each}}
 </template>
@@ -115,14 +125,14 @@
 
 <template name="showTags">
     {{#each tag in tags}}
-        <button class="deleteTag" data-tagid="{{tag._id}}">{{tag.text}}   &times;</button>
+        <button class="deleteTag" data-tagid="{{tag._id}}">{{tag.text}}<span class="delete_filter_x">&times;</span></button>
     {{/each}}
 </template>
 
 
 <template name="overviewButton">
-    <div>
-        <button id="overview" >overview</button>
+    <div id="overview_button">
+        <button id="overview" >&larr;</button>
     </div>
 </template>
 
