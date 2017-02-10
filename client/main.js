@@ -7,8 +7,6 @@ export const Tacks = new Mongo.Collection('tacks');
 export const Filters = new Mongo.Collection('activeFilters');
 
 import './main.html';
-
-// toastr package: https://atmospherejs.com/chrismbeckett/toastr
 // toastr demo: http://codeseven.github.io/toastr/demo.html
 
 Meteor.startup(() => {
@@ -243,6 +241,7 @@ Template.filterByTag.helpers({
 
 // PIECE
 
+// fetched from https://github.com/VeliovGroup/Meteor-Files-Demos/tree/master/demo-simplest-upload
 var handleUpload = function (event, template) {
     if (event.currentTarget.files && event.currentTarget.files[0]) {
 
@@ -448,6 +447,3 @@ Template.overviewButton.events({
         Session.set('showOverview', true);
     }
 });
-
-
-
